@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: Programming with R</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">Programming with R</h1></a>
+          <h2 class="subtitle">Analyzing data</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Select individual values and subsections from data.</li>
+<li>Perform operations on a data frame of data.</li>
+<li>Display simple graphs.</li>
+</ul>
+</div>
+</section>
+<h3 id="manipulating-data">Manipulating Data</h3>
+<p>Now that our data is loaded in memory, we can start doing things with it.</p>
+<p>If we want to get a single value from the data frame, we can provide an <a href="reference.html#index">index</a> in square brackets, just as we do in math:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># first value in gapminder</span>
+gapminder[<span class="dv">1</span>, <span class="dv">1</span>]</code></pre></div>
+<pre class="output"><code>[1] Afghanistan
+142 Levels: Afghanistan Albania Algeria Angola Argentina Australia Austria Bahrain Bangladesh ... Zimbabwe
+
+</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># middle value in gapminder</span>
+gapminder[<span class="dv">3</span>, <span class="dv">3</span>]</code></pre></div>
+<pre class="output"><code>[1] 10267083
+</code></pre>
+<p>An index like <code>[3, 3]</code> selects a single element of a data frame, but we can select whole sections as well. For example, we can select the first two rows of values for the first four columns like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder[<span class="dv">1</span>:<span class="dv">2</span>, <span class="dv">1</span>:<span class="dv">4</span>]</code></pre></div>
+<pre class="output"><code>      country year     pop continent
+1 Afghanistan 1952 8425333      Asia
+2 Afghanistan 1957 9240934      Asia
+</code></pre>
+<p>The <a href="reference.html#slice">slice</a> <code>1:4</code> means, “Start at index 1 and go to index 4.”</p>
+<p>The slice does not need to start at 1, e.g. the line below selects rows 5 through 10:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder[<span class="dv">5</span>:<span class="dv">10</span>, <span class="dv">1</span>:<span class="dv">4</span>]</code></pre></div>
+<p>We can use the function <code>c</code>, which stands for <strong>c</strong>ombine, to select non-contiguous values:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder[<span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">37</span>, <span class="dv">56</span>), <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">5</span>)]</code></pre></div>
+<pre class="output"><code>       country continent lifeExp
+3  Afghanistan      Asia  31.997
+8  Afghanistan      Asia  40.822
+37      Angola    Africa  30.015
+56   Argentina  Americas  70.774
+</code></pre>
+<p>We also don’t have to provide a slice for either the rows or the columns. If we don’t include a slice for the rows, R returns all the rows; if we don’t include a slice for the columns, R returns all the columns. If we don’t provide a slice for either rows or columns, e.g. <code>gapminder[, ]</code>, R returns the full data frame.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># All columns from row 5</span>
+gapminder[<span class="dv">5</span>, ]</code></pre></div>
+<pre class="output"><code>      country year      pop continent lifeExp gdpPercap
+5 Afghanistan 1972 13079460      Asia  36.088  739.9811
+</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># All rows from column 16</span>
+gapminder[, <span class="dv">6</span>]</code></pre></div>
+<p>We can also calculate some information from our data. For example, the maximum and minimum of a list are as follows.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">max</span>(gapminder[,<span class="dv">6</span>])
+<span class="kw">min</span>(gapminder[,<span class="dv">6</span>])</code></pre></div>
+<p>Now that we have our data in R, let’s do something with it.</p>
+<p>We have the GDP per capita as well as the population of the country. Let’s calculate the GDP and add that to our data frame. First, we multiply gdpPercap by pop and save that to a variable. Multiplying two columns automatically multiplies each pair of values and makes a vector containing each result.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdp&lt;-gapminder$gdpPercap *<span class="st"> </span>gapminder$pop</code></pre></div>
+<p>gdp is a vector. A vector is the most common and basic data structure in <code>R</code>. It can <strong>only contain one data type</strong>. They are the building blocks of every other data structure.</p>
+<p>A vector can contain any of five types:</p>
+<ul>
+<li>logical (e.g., <code>TRUE</code>, <code>FALSE</code>)</li>
+<li>integer (e.g., <code>as.integer(3)</code>)</li>
+<li>numeric (real or decimal) (e.g, <code>2</code>, <code>2.0</code>, <code>pi</code>)</li>
+<li>complex (e.g, <code>1 + 0i</code>, <code>1 + 4i</code>)</li>
+<li>character (e.g, <code>&quot;a&quot;</code>, <code>&quot;swc&quot;</code>)</li>
+</ul>
+<p>Now we can add the vector gdp to the gapminder data frame using <code>cbind</code> which stands for “column bind”, as in bind the vector gdp to the gapminder data frame.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">cbind</span>(gapminder, gdp)</code></pre></div>
+<p>We can check that our results are correct by looking at the first item in gdp and comparing it to the expected result.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdp[<span class="dv">1</span>]
+gapminder$gdp[<span class="dv">1</span>]
+gapminder$gdpPercap[<span class="dv">1</span>]*gapminder$pop[<span class="dv">1</span>]</code></pre></div>
+<p>We can also view the first few rows of the data again.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gapminder)</code></pre></div>
+<pre class="output"><code>      country year      pop continent lifeExp gdpPercap         gdp
+1 Afghanistan 1952  8425333      Asia  28.801  779.4453  6567086330
+2 Afghanistan 1957  9240934      Asia  30.332  820.8530  7585448670
+3 Afghanistan 1962 10267083      Asia  31.997  853.1007  8758855797
+4 Afghanistan 1967 11537966      Asia  34.020  836.1971  9648014150
+5 Afghanistan 1972 13079460      Asia  36.088  739.9811  9678553274
+6 Afghanistan 1977 14880372      Asia  38.438  786.1134 11697659231
+</code></pre>
+<p>Now let’s use our data to answer a biological question. For example:</p>
+<h1 id="what-is-the-relationship-between-life-expectancy-and-year">What is the relationship between life expectancy and year?</h1>
+<p>We won’t go into too much detail, but briefly:</p>
+<ul>
+<li><code>lm</code> estimates linear statistical models</li>
+<li>The first argument is a formula, with <code>a ~ b</code> meaning that <code>a</code>, the dependent (or response) variable, is a function of <code>b</code>, the independent variable.</li>
+<li>We tell <code>lm</code> to use the gapminder data frame, so it knows where to find the variables <code>lifeExp</code> and <code>year</code>.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">reg &lt;-<span class="st"> </span><span class="kw">lm</span>(lifeExp ~<span class="st"> </span>year, <span class="dt">data=</span>gapminder)</code></pre></div>
+<p>Let’s look at the output:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">reg</code></pre></div>
+<pre class="output"><code>
+Call:
+lm(formula = lifeExp ~ year, data = gapminder)
+
+Coefficients:
+(Intercept)         year  
+  -585.6522       0.3259  
+</code></pre>
+<p>Not much there right? But if we look at the structure…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(reg)</code></pre></div>
+<pre class="output"><code>List of 12
+ $ coefficients : Named num [1:2] -585.652 0.326
+  ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;(Intercept)&quot; &quot;year&quot;
+ $ residuals    : Named num [1:1704] -21.7 -21.8 -21.8 -21.4 -20.9 ...
+  ..- attr(*, &quot;names&quot;)= chr [1:1704] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+ $ effects      : Named num [1:1704] -2455.1 232.2 -20.8 -20.5 -20.2 ...
+  ..- attr(*, &quot;names&quot;)= chr [1:1704] &quot;(Intercept)&quot; &quot;year&quot; &quot;&quot; &quot;&quot; ...
+ $ rank         : int 2
+ $ fitted.values: Named num [1:1704] 50.5 52.1 53.8 55.4 57 ...
+  ..- attr(*, &quot;names&quot;)= chr [1:1704] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+ $ assign       : int [1:2] 0 1
+ $ qr           :List of 5
+  ..$ qr   : num [1:1704, 1:2] -41.2795 0.0242 0.0242 0.0242 0.0242 ...
+  .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. ..$ : chr [1:1704] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+  .. .. ..$ : chr [1:2] &quot;(Intercept)&quot; &quot;year&quot;
+  .. ..- attr(*, &quot;assign&quot;)= int [1:2] 0 1
+  ..$ qraux: num [1:2] 1.02 1.03
+  ..$ pivot: int [1:2] 1 2
+  ..$ tol  : num 1e-07
+  ..$ rank : int 2
+  ..- attr(*, &quot;class&quot;)= chr &quot;qr&quot;
+ $ df.residual  : int 1702
+ $ xlevels      : Named list()
+ $ call         : language lm(formula = lifeExp ~ year, data = gapminder)
+ $ terms        :Classes &#39;terms&#39;, &#39;formula&#39; length 3 lifeExp ~ year
+  .. ..- attr(*, &quot;variables&quot;)= language list(lifeExp, year)
+  .. ..- attr(*, &quot;factors&quot;)= int [1:2, 1] 0 1
+  .. .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. .. ..$ : chr [1:2] &quot;lifeExp&quot; &quot;year&quot;
+  .. .. .. ..$ : chr &quot;year&quot;
+  .. ..- attr(*, &quot;term.labels&quot;)= chr &quot;year&quot;
+  .. ..- attr(*, &quot;order&quot;)= int 1
+  .. ..- attr(*, &quot;intercept&quot;)= int 1
+  .. ..- attr(*, &quot;response&quot;)= int 1
+  .. ..- attr(*, &quot;.Environment&quot;)=&lt;environment: R_GlobalEnv&gt; 
+  .. ..- attr(*, &quot;predvars&quot;)= language list(lifeExp, year)
+  .. ..- attr(*, &quot;dataClasses&quot;)= Named chr [1:2] &quot;numeric&quot; &quot;numeric&quot;
+  .. .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;lifeExp&quot; &quot;year&quot;
+ $ model        :&#39;data.frame&#39;:  1704 obs. of  2 variables:
+  ..$ lifeExp: num [1:1704] 28.8 30.3 32 34 36.1 ...
+  ..$ year   : int [1:1704] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+  ..- attr(*, &quot;terms&quot;)=Classes &#39;terms&#39;, &#39;formula&#39; length 3 lifeExp ~ year
+  .. .. ..- attr(*, &quot;variables&quot;)= language list(lifeExp, year)
+  .. .. ..- attr(*, &quot;factors&quot;)= int [1:2, 1] 0 1
+  .. .. .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. .. .. ..$ : chr [1:2] &quot;lifeExp&quot; &quot;year&quot;
+  .. .. .. .. ..$ : chr &quot;year&quot;
+  .. .. ..- attr(*, &quot;term.labels&quot;)= chr &quot;year&quot;
+  .. .. ..- attr(*, &quot;order&quot;)= int 1
+  .. .. ..- attr(*, &quot;intercept&quot;)= int 1
+  .. .. ..- attr(*, &quot;response&quot;)= int 1
+  .. .. ..- attr(*, &quot;.Environment&quot;)=&lt;environment: R_GlobalEnv&gt; 
+  .. .. ..- attr(*, &quot;predvars&quot;)= language list(lifeExp, year)
+  .. .. ..- attr(*, &quot;dataClasses&quot;)= Named chr [1:2] &quot;numeric&quot; &quot;numeric&quot;
+  .. .. .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;lifeExp&quot; &quot;year&quot;
+ - attr(*, &quot;class&quot;)= chr &quot;lm&quot;
+</code></pre>
+<p>There’s a great deal stored in nested lists! The structure function allows you to see all the data available, in this case, the data that was returned by the <code>lm</code> function.</p>
+<p>For now, we can look at the <code>summary</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(reg)</code></pre></div>
+<pre class="output"><code>
+Call:
+lm(formula = lifeExp ~ year, data = gapminder)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-39.949  -9.651   1.697  10.335  22.158 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -585.65219   32.31396  -18.12   &lt;2e-16 ***
+year           0.32590    0.01632   19.96   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 11.63 on 1702 degrees of freedom
+Multiple R-squared:  0.1898,    Adjusted R-squared:  0.1893 
+F-statistic: 398.6 on 1 and 1702 DF,  p-value: &lt; 2.2e-16
+</code></pre>
+<p>As you might expect, life expectancy has slowly been increasing over time, so we see a significant positive association!</p>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/lesson-template">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </body>
+</html>

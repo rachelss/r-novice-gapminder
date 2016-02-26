@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: R for reproducible scientific analysis</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">R for reproducible scientific analysis</h1></a>
+          <h2 class="subtitle">Creating functions</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Be able to define a function that takes arguments.</li>
+<li>Be able to return a value from a function.</li>
+<li>Be able to write conditional statements with <code>if</code> and <code>else</code>.</li>
+<li>Know when and how to set default values for function arguments.</li>
+<li>Understand why we should divide programs into small, single-purpose functions.</li>
+</ul>
+</div>
+</section>
+<p>There are many reasons to make it easy to rerun our analyses. The gapminder data is updated periodically, and we may want to pull in that new information later and re-run our analysis again. We may also obtain similar data from a different source in the future.</p>
+<p>In this lesson, we’ll learn how to write a function so that we can repeat a set of operations with a single command. Once we have a function that is known to work, we can use it repeatedly without worrying about how it works, just as we have used functions like min and max.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="what-is-a-function"><span class="glyphicon glyphicon-pushpin"></span>What is a function?</h2>
+</div>
+<div class="panel-body">
+<p>Functions gather a sequence of operations into a whole, preserving it for ongoing use. Functions provide:</p>
+<ul>
+<li>a name we can remember and invoke it by</li>
+<li>relief from the need to remember the individual operations</li>
+<li>a defined set of inputs and expected outputs</li>
+<li>rich connections to the larger programming environment</li>
+</ul>
+<p>As the basic building block of most programming languages, user-defined functions constitute “programming” as much as any single abstraction can. If you have written a function, you are a computer programmer.</p>
+</div>
+</aside>
+<h2 id="defining-a-function">Defining a function</h2>
+<p>We define a function by assigning the output of <code>function</code> to a variable. The list of argument names are contained within parentheses. Next, the <a href="reference.html#function-body">body</a> of the function–the statements that are executed when it runs–is contained within curly braces (<code>{}</code>). The statements in the body are indented by two spaces. This makes the code easier to read but does not affect how the code operates.</p>
+<p>When we call the function, the values we pass to it are assigned to those variables so that we can use them inside the function. Inside the function, we use a <a href="reference.html#return-statement">return statement</a> to send a result back to whoever asked for it.</p>
+<p>Calling our own function is no different from calling any other function.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip"><span class="glyphicon glyphicon-pushpin"></span>Tip</h2>
+</div>
+<div class="panel-body">
+<p>One feature unique to R is that the return statement is not required. R automatically returns whichever variable is on the last line of the body of the function. Since we are just learning, we will explicitly define the return statement.</p>
+</div>
+</aside>
+<p>Previously we calculated the GDP by multiplying the population and gdp per capita. Rather than specifying the dataset we want to calculate gdp for every time, let’s turn this into a function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Takes a dataset and multiplies the pop column with the gdpPercap column.</span>
+calcGDP &lt;-<span class="st"> </span>function(dat) {
+  gdp&lt;-dat$gdpPercap *<span class="st"> </span>dat$pop
+  
+  <span class="kw">return</span>(gdp)
+}</code></pre></div>
+<p>We define <code>calcGDP</code> by assigning it to the output of <code>function</code>. The list of argument names are contained within parentheses. Next, the body of the function – the statements executed when you call the function – is contained within curly braces (<code>{}</code>).</p>
+<p>We’ve indented the statements in the body by two spaces. This makes the code easier to read but does not affect how it operates.</p>
+<p>When we call the function, the values we pass to it are assigned to the arguments, which become variables inside the body of the function.</p>
+<p>Inside the function, we use the <code>return</code> function to send back the result. This return function is optional: R will automatically return the results of whatever command is executed on the last line of the function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcGDP</span>(<span class="kw">head</span>(gapminder))</code></pre></div>
+<pre class="output"><code>[1]  6567086330  7585448670  8758855797  9648014150  9678553274 11697659231
+</code></pre>
+<p>That’s not very informative. Let’s add some more arguments so we can extract that per year and country. We also want to output the information from the other columns.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Takes a dataset and multiplies the population column with the GDP per capita column.</span>
+calcGDP &lt;-<span class="st"> </span>function(dat, year, country) {
+  dat &lt;-<span class="st"> </span>dat[dat$year %in%<span class="st"> </span>year, ]
+  dat &lt;-<span class="st"> </span>dat[dat$country %in%<span class="st"> </span>country,]
+  
+  gdp &lt;-<span class="st"> </span>dat$pop *<span class="st"> </span>dat$gdpPercap
+  
+  dat &lt;-<span class="st"> </span><span class="kw">cbind</span>(dat, gdp)
+  <span class="kw">return</span>(dat)
+}
+
+<span class="kw">calcGDP</span>(gapminder, <span class="dv">1952</span>,<span class="dt">country=</span><span class="st">&quot;Afghanistan&quot;</span>)</code></pre></div>
+<p>The function now takes a subset of the rows for all columns by year. It then subsets this subset by country. Then it calculates the GDP for the subset of the previous two steps. The function then adds the GDP as a new column to the subsetted data and returns this as the final result. Because we have defined all of these pieces of code in one function we can now repeat this process for any dataset.</p>
+<p>We can now calculate the GDP for a single combination of year and country.</p>
+<p>By using <code>%in%</code> we can also give multiple years or countries to those arguments.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcGDP</span>(gapminder, <span class="dv">1952</span>:<span class="dv">1962</span>,<span class="dt">country=</span><span class="st">&quot;Afghanistan&quot;</span>)</code></pre></div>
+<pre class="output"><code>      country year      pop continent lifeExp gdpPercap        gdp
+1 Afghanistan 1952  8425333      Asia  28.801  779.4453 6567086330
+2 Afghanistan 1957  9240934      Asia  30.332  820.8530 7585448670
+3 Afghanistan 1962 10267083      Asia  31.997  853.1007 8758855797</code></pre>
+<p>Now let’s expand this function to check whether the year and country are specified. If they aren’t then we can use all of them. We can use conditional statements to set actions to occur only if a condition or a set of conditions are met.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># if</span>
+if (condition is true) {
+  perform action
+}
+
+<span class="co"># if ... else</span>
+if (condition is true) {
+  perform action
+} else {  <span class="co"># that is, if the condition is false,</span>
+  perform alternative action
+}</code></pre></div>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-1"><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
+</div>
+<div class="panel-body">
+<p>Use an <code>if</code> statement to print a suitable message reporting whether there are any records from 2002 in the <code>gapminder</code> dataset. Now do the same for 2012.</p>
+</div>
+</section>
+<p>Did anyone get a warning message like this?</p>
+<pre class="error"><code>Warning in if (gapminder$year == 2012) {: the condition has length &gt; 1 and
+only the first element will be used
+</code></pre>
+<p>If your condition evaluates to a vector with more than one logical element, the function <code>if</code> will still run, but will only evaluate the condition in the first element. Here you need to make sure your condition is of length 1.</p>
+<p>For calculating gdp information we first specify the default value of year and country as NULL. We then check whether when the function is called the year or country is specified or the default value is used using an <code>if</code> statement and the <code>is.null</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Takes a dataset and multiplies the population column with the GDP per capita column.</span>
+calcGDP &lt;-<span class="st"> </span>function(dat, <span class="dt">year=</span><span class="ot">NULL</span>, <span class="dt">country=</span><span class="ot">NULL</span>) {
+  if(!<span class="kw">is.null</span>(year)) {
+    dat &lt;-<span class="st"> </span>dat[dat$year %in%<span class="st"> </span>year, ]
+  }
+  if (!<span class="kw">is.null</span>(country)) {
+    dat &lt;-<span class="st"> </span>dat[dat$country %in%<span class="st"> </span>country,]
+  }
+  gdp &lt;-<span class="st"> </span>dat$pop *<span class="st"> </span>dat$gdpPercap
+
+  dat &lt;-<span class="st"> </span><span class="kw">cbind</span>(dat, <span class="dt">gdp=</span>gdp)
+  <span class="kw">return</span>(dat)
+}</code></pre></div>
+<p>The function now subsets the provided data by year if the year argument isn’t empty, then subsets the result by country if the country argument isn’t empty. Then it calculates the GDP for whatever subset emerges from the previous two steps. The function then adds the GDP as a new column to the subsetted data and returns this as the final result. You can see that the output is much more informative than just getting a vector of numbers.</p>
+<p>Let’s take a look at what happens when we specify the year:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">calcGDP</span>(gapminder, <span class="dt">year=</span><span class="dv">2007</span>))</code></pre></div>
+<pre class="output"><code>       country year      pop continent lifeExp  gdpPercap          gdp
+12 Afghanistan 2007 31889923      Asia  43.828   974.5803  31079291949
+24     Albania 2007  3600523    Europe  76.423  5937.0295  21376411360
+36     Algeria 2007 33333216    Africa  72.301  6223.3675 207444851958
+48      Angola 2007 12420476    Africa  42.731  4797.2313  59583895818
+60   Argentina 2007 40301927  Americas  75.320 12779.3796 515033625357
+72   Australia 2007 20434176   Oceania  81.235 34435.3674 703658358894
+</code></pre>
+<p>Or for a specific country:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcGDP</span>(gapminder, <span class="dt">country=</span><span class="st">&quot;Australia&quot;</span>)</code></pre></div>
+<pre class="output"><code>     country year      pop continent lifeExp gdpPercap          gdp
+61 Australia 1952  8691212   Oceania  69.120  10039.60  87256254102
+62 Australia 1957  9712569   Oceania  70.330  10949.65 106349227169
+63 Australia 1962 10794968   Oceania  70.930  12217.23 131884573002
+64 Australia 1967 11872264   Oceania  71.100  14526.12 172457986742
+65 Australia 1972 13177000   Oceania  71.930  16788.63 221223770658
+66 Australia 1977 14074100   Oceania  73.490  18334.20 258037329175
+67 Australia 1982 15184200   Oceania  74.740  19477.01 295742804309
+68 Australia 1987 16257249   Oceania  76.320  21888.89 355853119294
+69 Australia 1992 17481977   Oceania  77.560  23424.77 409511234952
+70 Australia 1997 18565243   Oceania  78.830  26997.94 501223252921
+71 Australia 2002 19546792   Oceania  80.370  30687.75 599847158654
+72 Australia 2007 20434176   Oceania  81.235  34435.37 703658358894
+</code></pre>
+<p>Or both:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcGDP</span>(gapminder, <span class="dt">year=</span><span class="dv">2007</span>, <span class="dt">country=</span><span class="st">&quot;Australia&quot;</span>)</code></pre></div>
+<pre class="output"><code>     country year      pop continent lifeExp gdpPercap          gdp
+72 Australia 2007 20434176   Oceania  81.235  34435.37 703658358894
+</code></pre>
+<p>Let’s walk through the body of the function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">calcGDP &lt;-<span class="st"> </span>function(dat, <span class="dt">year=</span><span class="ot">NULL</span>, <span class="dt">country=</span><span class="ot">NULL</span>) {</code></pre></div>
+<p>Here we’ve added two arguments, <code>year</code>, and <code>country</code>. We’ve set <em>default arguments</em> for both as <code>NULL</code> using the <code>=</code> operator in the function definition. This means that those arguments will take on those values unless the user specifies otherwise.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  if(!<span class="kw">is.null</span>(year)) {
+    dat &lt;-<span class="st"> </span>dat[dat$year %in%<span class="st"> </span>year, ]
+  }</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  if (!<span class="kw">is.null</span>(country)) {
+    dat &lt;-<span class="st"> </span>dat[dat$country %in%<span class="st"> </span>country,]
+  }</code></pre></div>
+<p>Here, we check whether each additional argument is set to <code>null</code>, and whenever they’re not <code>null</code> overwrite the dataset stored in <code>dat</code> with a subset given by the non-<code>null</code> argument.</p>
+<p>We can now ask the function to calculate the GDP for:</p>
+<ul>
+<li>The whole dataset;</li>
+<li>A single year;</li>
+<li>A single country;</li>
+<li>A single combination of year and country.</li>
+</ul>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-pass-by-value"><span class="glyphicon glyphicon-pushpin"></span>Tip: Pass by value</h2>
+</div>
+<div class="panel-body">
+<p>Functions in R almost always make copies of the data to operate on inside of a function body. When we modify <code>dat</code> inside the function we are modifying the copy of the gapminder dataset stored in <code>dat</code>, not the original variable we gave as the first argument.</p>
+<p>This is called “pass-by-value” and it makes writing code much safer: you can always be sure that whatever changes you make within the body of the function, stay inside the body of the function.</p>
+</div>
+</aside>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-function-scope"><span class="glyphicon glyphicon-pushpin"></span>Tip: Function scope</h2>
+</div>
+<div class="panel-body">
+<p>Another important concept is scoping: any variables (or functions!) you create or modify inside the body of a function only exist for the lifetime of the function’s execution. When we call <code>calcGDP</code>, the variables <code>dat</code>, <code>gdp</code> only exist inside the body of the function. Even if we have variables of the same name in our interactive R session, they are not modified in any way when executing a function.</p>
+</div>
+</aside>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/lesson-template">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </body>
+</html>

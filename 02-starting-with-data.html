@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: Programming with R</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">Programming with R</h1></a>
+          <h2 class="subtitle">Reading in data</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Read tabular data from a file into a program.</li>
+<li>Assign values to variables.</li>
+</ul>
+</div>
+</section>
+<blockquote>
+<p>Download the gapminder data from <a href="https://raw.githubusercontent.com/resbaz/r-novice-gapminder-files/master/data/gapminder-FiveYearData.csv">here</a>.</p>
+<ol style="list-style-type: decimal">
+<li>Download the file (CTRL + S, right mouse click -&gt; “Save as”, or File -&gt; “Save page as”)</li>
+<li>Make sure it’s saved under the name <code>gapminder-FiveYearData.csv</code></li>
+</ol>
+</blockquote>
+<p>If you’re curious about where this data comes from you might like to look at the <a href="http://www.gapminder.org/data/documentation/">Gapminder website</a>.</p>
+<p>Now we want to load the gapminder data into R.</p>
+<p>As its file extension would suggest, the file contains comma-separated values, and seems to contain a header row.</p>
+<p>We can use <code>read.csv</code> to read this into R. </p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file=</span><span class="st">&quot;data/gapminder-FiveYearData.csv&quot;</span>)</code></pre></div>
+<p>As in bash, we can use head to view the first few lines of the file.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gapminder)</code></pre></div>
+<pre class="output"><code>      country year      pop continent lifeExp gdpPercap
+1 Afghanistan 1952  8425333      Asia  28.801  779.4453
+2 Afghanistan 1957  9240934      Asia  30.332  820.8530
+3 Afghanistan 1962 10267083      Asia  31.997  853.1007
+4 Afghanistan 1967 11537966      Asia  34.020  836.1971
+5 Afghanistan 1972 13079460      Asia  36.088  739.9811
+6 Afghanistan 1977 14880372      Asia  38.438  786.1134
+</code></pre>
+<p>Alternatively, we can view the file by doubleclicking “gapminder” in the upper right-hand pane of RStudio.</p>
+<h2 id="examining-the-dataset">Examining the dataset</h2>
+<p>Let’s have a look at our example data (life expectancy in various countries for various years).</p>
+<p>There are a few functions we can use to interrogate data structures in R. Let’s use them to explore the gapminder dataset.</p>
+<p>The first thing you should do when reading data in, is check that it matches what you expect, even if the command ran without warnings or errors. The <code>str</code> function, short for “structure”, is really useful for this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gapminder)</code></pre></div>
+<pre class="output"><code>&#39;data.frame&#39;:   1704 obs. of  6 variables:
+ $ country  : chr  &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; ...
+ $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+ $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
+ $ continent: chr  &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; ...
+ $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+ $ gdpPercap: num  779 821 853 836 740 ...
+</code></pre>
+<p>We can see that the object is a <code>data.frame</code> with 1,704 observations (rows), and 6 variables (columns). Below that, we see the name of each column, followed by a “:”, followed by the type of variable in that column, along with the first few entries.</p>
+<p>The <code>class</code> function will show us the type of data structure (a data frame) without additional information.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(gapminder)</code></pre></div>
+<pre class="output"><code>[1] &quot;data.frame&quot;
+</code></pre>
+<p>The <code>typeof</code> function shows us the type of data in the variable.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder)</code></pre></div>
+<pre class="output"><code>[1] &quot;list&quot;
+</code></pre>
+<p>Here we see that data frames are lists ‘under the hood’.</p>
+<p>The gapminder data is stored in a “data.frame”. This is the default data structure when you read in data; it is useful for storing data with mixed types of columns.</p>
+<p>Let’s look at some of the columns individually. We can access each column using the name of the dataset followed by a $ and then the name of the column. For example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder$year</code></pre></div>
+<p>We can also look at the characteristics of the data in the column:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder$year)</code></pre></div>
+<pre class="output"><code>[1] &quot;integer&quot;
+</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder$lifeExp)</code></pre></div>
+<pre class="output"><code>[1] &quot;double&quot;
+</code></pre>
+<p>A “double” is a decimal value.</p>
+<p>Can anyone guess what we should expect the type of the continent column to be?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">typeof</span>(gapminder$continent)</code></pre></div>
+<pre class="output"><code>[1] &quot;integer&quot;
+</code></pre>
+<p>If you were expecting a the answer to be “character”, you would rightly be surprised by the answer. Let’s take a look at the class of this column:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(gapminder$continent)</code></pre></div>
+<pre class="output"><code>[1] &quot;factor&quot;
+</code></pre>
+<p>One of the default behaviours of R is to treat any text columns as “factors” when reading in data. The reason for this is that text columns often represent categorical data, which need to be factors to be handled appropriately by the statistical modeling functions in R.</p>
+<p>However it’s not obvious behaviour, and something that trips many people up. We can disable this behaviour and read in the data again.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">options</span>(<span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>)
+gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file=</span><span class="st">&quot;data/gapminder-FiveYearData.csv&quot;</span>)</code></pre></div>
+<p>Remember, if you do turn it off automatic conversion to factors you will need to explicitly convert the variables into factors when running statistical models. This can be useful, because it forces you to think about the question you’re asking, and makes it easier to specify the ordering of the categories.</p>
+<p>However there are many in the R community who find it more sensible to leave this as the default behaviour.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip-changing-options"><span class="glyphicon glyphicon-pushpin"></span>Tip: Changing options</h2>
+</div>
+<div class="panel-body">
+<p>When R starts, it runs any code in the file <code>.Rprofile</code> in the project directory. You can make permanent changes to default behaviour by storing the changes in that file. BE CAREFUL, however. If you change R’s default options, programs written by others may not run correctly in your environment and vice versa. For this reason, some argue that most such changes should be in your scripts, where they are visible.</p>
+</div>
+</aside>
+<p>We can view the column names of the data.frame using the function <code>colnames</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(gapminder)  </code></pre></div>
+<pre class="output"><code>[1] &quot;country&quot;   &quot;year&quot;      &quot;pop&quot;       &quot;continent&quot; &quot;lifeExp&quot;   &quot;gdpPercap&quot;
+</code></pre>
+<p>You can also change the column names this way (use a copy of the data rather than changing the column names of the original data).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">copy &lt;-<span class="st"> </span>gapminder
+<span class="kw">colnames</span>(copy) &lt;-<span class="st"> </span>letters[<span class="dv">1</span>:<span class="dv">6</span>]
+<span class="kw">head</span>(copy, <span class="dt">n=</span><span class="dv">3</span>)</code></pre></div>
+<pre class="output"><code>            a    b        c    d      e        f
+1 Afghanistan 1952  8425333 Asia 28.801 779.4453
+2 Afghanistan 1957  9240934 Asia 30.332 820.8530
+3 Afghanistan 1962 10267083 Asia 31.997 853.1007
+</code></pre>
+<p>Similarly, we can view the row names of the data.frame using the function <code>rownames</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rownames</span>(gapminder)[<span class="dv">1</span>:<span class="dv">20</span>]</code></pre></div>
+<pre class="output"><code> [1] &quot;1&quot;  &quot;2&quot;  &quot;3&quot;  &quot;4&quot;  &quot;5&quot;  &quot;6&quot;  &quot;7&quot;  &quot;8&quot;  &quot;9&quot;  &quot;10&quot; &quot;11&quot; &quot;12&quot; &quot;13&quot; &quot;14&quot;
+[15] &quot;15&quot; &quot;16&quot; &quot;17&quot; &quot;18&quot; &quot;19&quot; &quot;20&quot;
+</code></pre>
+<p>See those numbers in the square brackets on the left? That tells you the number of the first entry in that row of output. So we see that for the 5th row, the rowname is “5”. In this case, the rownames are simply the row numbers.</p>
+<p>There are a few related ways of retrieving and modifying this information. <code>attributes</code> will give you both the row and column names, along with the class information, while <code>dimnames</code> will give you just the rownames and column names.</p>
+<p>In both cases, the output object is stored in a <code>list</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(<span class="kw">dimnames</span>(gapminder))</code></pre></div>
+<pre class="output"><code>List of 2
+ $ : chr [1:1704] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+ $ : chr [1:6] &quot;country&quot; &quot;year&quot; &quot;pop&quot; &quot;continent&quot; ...
+</code></pre>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/lesson-template">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </body>
+</html>
