@@ -100,6 +100,8 @@ calcGDP &lt;-<span class="st"> </span>function(dat) {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcGDP</span>(gapminder[<span class="dv">20</span>:<span class="dv">30</span>,])</code></pre></div>
 <p>We can use <code>==</code> to subset data by a particular value.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">calcGDP</span>(gapminder[gapminder$year ==<span class="st"> </span><span class="dv">2007</span>, ]))</code></pre></div>
+<p>We can get values for two different years using by specifying one year OR another using <code>|</code> (the converse is <code>&amp;</code>)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">calcGDP</span>(gapminder[gapminder$year ==<span class="st"> </span><span class="dv">2007</span>|gapminder$year ==<span class="st"> </span><span class="dv">1952</span>, ]))</code></pre></div>
 <p>Since this is getting unwieldy to read let’s put all this subsetting into our function. When we call the function we want to specify the dataset, year(s), and country(ies).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">calcGDP</span>(gapminder, <span class="dv">1952</span>,<span class="st">&quot;Afghanistan&quot;</span>)</code></pre></div>
 <p>We can also use a matching function <code>%in%</code> to subset data by a range of values.</p>
