@@ -34,7 +34,7 @@ usability.
 3.  [Analyzing data](03-analyzing-data.html)
 4.  [Functions](04-functions.html)
 5.  [Plotting](05-plot-ggplot2.html)
-6.  [Vector data](06-vectorisation.htmll)
+6.  [Vector data](06-vectorisation.html)
 7.  [Loops](07-control-flow.html)
 8.  [Writing data](08-writing-data.html)
 9.  [Split-apply-combine](09-plyr.html)

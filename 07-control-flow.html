@@ -85,6 +85,11 @@
 <p>hint: the <code>unique</code> function gets the unique items in a list, and the <code>mean</code> function calculates the mean of a list</p>
 </div>
 </section>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">for (cont in <span class="kw">unique</span>(gapminder$continent)){
+  <span class="kw">print</span>(cont)
+  dat &lt;-<span class="st"> </span>gapminder[gapminder$continent ==<span class="st"> </span>cont, ]
+  <span class="kw">print</span>(<span class="kw">mean</span>(dat$lifeExp))
+}</code></pre></div>
         </div>
       </div>
       </article>
