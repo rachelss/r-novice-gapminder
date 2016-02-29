@@ -50,7 +50,7 @@
 <p>Now we want to load the gapminder data into R.</p>
 <p>As its file extension would suggest, the file contains comma-separated values, and seems to contain a header row.</p>
 <p>We can use <code>read.csv</code> to read this into R. </p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file=</span><span class="st">&quot;data/gapminder-FiveYearData.csv&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gapminder &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file=</span><span class="st">&quot;gapminder-FiveYearData.csv&quot;</span>)</code></pre></div>
 <p>As in bash, we can use head to view the first few lines of the file.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(gapminder)</code></pre></div>
 <pre class="output"><code>      country year      pop continent lifeExp gdpPercap

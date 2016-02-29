@@ -236,6 +236,21 @@ calcGDP &lt;-<span class="st"> </span>function(dat, <span class="dt">year=</span
 <p>Another important concept is scoping: any variables (or functions!) you create or modify inside the body of a function only exist for the lifetime of the function’s execution. When we call <code>calcGDP</code>, the variables <code>dat</code>, <code>gdp</code> only exist inside the body of the function. Even if we have variables of the same name in our interactive R session, they are not modified in any way when executing a function.</p>
 </div>
 </aside>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="challenge-1"><span class="glyphicon glyphicon-pencil"></span>Challenge 1</h2>
+</div>
+<div class="panel-body">
+<p>What is the expected result from the following script?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">add3 &lt;-<span class="st"> </span>function(y){
+  y<span class="dv">+3</span>
+}
+x &lt;-<span class="st"> </span><span class="dv">10</span>
+y &lt;-<span class="st"> </span><span class="kw">add3</span>(x)
+<span class="kw">print</span>(x)
+<span class="kw">print</span>(y)</code></pre></div>
+</div>
+</section>
         </div>
       </div>
       </article>

@@ -9,21 +9,19 @@ minutes: 45
 
 > ## Learning Objectives {.objectives}
 >
-> * To gain familiarity with the various panes in the RStudio IDE
-> * To gain familiarity with the buttons, short cuts and options in the RStudio IDE
-> * To understand variables and how to assign to them
-> * To be able to manage your workspace in an interactive R session
-> * To be able to use mathematical and comparison operations
-> * To be able to call functions
-> 
+> * To gain familiarity with the RStudio IDE
 
 ## Introduction to RStudio
 
 Welcome to the R portion of the Software Carpentry workshop.
 
-Throughout this lesson, we're going to teach you some of the fundamentals of
-the R language as well as some best practices for organising code for
-scientific projects that will make your life easier.
+The best way to learn how to program is to do something useful, so this introduction to R is built around a common scientific task: data analysis. You will learn some of the fundamentals of
+the R language, but our real goal is for you to learn to conduct analyses efficiently and to do so in a way that is reproducible (by you and others). We use R in our lessons because:
+
+we have to use something for examples;
+it’s free, well-documented, and runs almost everywhere;
+it has a large (and growing) user base among scientists; and
+it has a large library of external packages available for performing diverse tasks.
 
 We'll be using RStudio: a free, open source R integrated development
 environment. It provides a built in editor, works on all platforms (including
@@ -99,4 +97,4 @@ network). R and RStudio have functionality for managing packages:
 * You can remove a package with `remove.packages("packagename")`
 * You can make a package you have installed available for use in your session with `library(packagename)`
 
-Install the following packages: `ggplot2`, `plyr`, `gapminder`
+Install the following packages: `ggplot2`, `plyr`, `gapminder` if you have not done so already.
