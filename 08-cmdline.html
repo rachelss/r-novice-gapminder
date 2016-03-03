@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: Programming with R</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">Programming with R</h1></a>
+          <h2 class="subtitle">Command-Line Programs</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Use the values of command-line arguments in a program.</li>
+<li>Handle flags and files separately in a command-line program.</li>
+<li>Read data from standard input in a program so that it can be used in a pipeline.</li>
+</ul>
+</div>
+</section>
+<p>The R Console and other interactive tools like RStudio are great for prototyping code and exploring data, but sooner or later we will want to use our program in a pipeline or run it in a shell script to process thousands of data files. In order to do that, we need to make our programs work like other Unix command-line tools. For example, we may want to run the analyses and make the plots as we were doing previously for the gapminder dataset for any dataset that we specify.</p>
+<pre><code>$ Rscript analysis.R gapminder-FiveYearData.csv
+</code></pre>
+<h3 id="command-line-arguments">Command-Line Arguments</h3>
+<p>Using the text editor of your choice, save the following line of code in a text file called <code>session-info.R</code>:</p>
+<pre class="output"><code>sessionInfo()
+</code></pre>
+<p>The function, <code>sessionInfo</code>, outputs the version of R you are running as well as the type of computer you are using (as well as the versions of the packages that have been loaded). This is very useful information to include when asking others for help with your R code.</p>
+<p>Now we can run the code in the file we created from the Unix Shell using <code>Rscript</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rscript session-info.R</code></pre></div>
+<pre class="output"><code>R version 3.2.2 (2015-08-14)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 14.04.3 LTS
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  base     
+</code></pre>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tip"><span class="glyphicon glyphicon-pushpin"></span>Tip</h2>
+</div>
+<div class="panel-body">
+<p>If that did not work, remember that you must be in the correct directory. You can determine which directory you are currently in using <code>pwd</code> and change to a different directory using <code>cd</code>. For a review, see this <a href="https://swcarpentry.github.io/shell-novice/01-filedir.html">lesson</a>.</p>
+</div>
+</aside>
+<p>Now let’s create another script that does something more interesting. Write the following lines in a file named <code>print-args.R</code>:</p>
+<pre class="output"><code>args &lt;- commandArgs()
+cat(args, sep = &quot;\n&quot;)
+</code></pre>
+<p>The function <code>commandArgs</code> extracts all the command line arguments and returns them as a vector. The function <code>cat</code>, similar to the <code>cat</code> of the Unix Shell, outputs the contents of the variable. Since we did not specify a filename for writing, <code>cat</code> sends the output to <a href="reference.html#standard-output-(stdout)">standard output</a>, which we can then pipe to other Unix functions. Because we set the argument <code>sep</code> to <code>&quot;\n&quot;</code>, which is the symbol to start a new line, each element of the vector is printed on its own line. Let’s see what happens when we run this program in the Unix Shell:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rscript print-args.R</code></pre></div>
+<pre class="output"><code>/usr/lib/R/bin/exec/R
+--slave
+--no-restore
+--file=print-args.R
+</code></pre>
+<p>From this output, we learn that <code>Rscript</code> is just a convenience command for running R scripts. The first argument in the vector is the path to the <code>R</code> executable. The following are all command-line arguments that affect the behavior of R. From the R help file:</p>
+<ul>
+<li><code>--slave</code>: Make R run as quietly as possible</li>
+<li><code>--no-restore</code>: Don’t restore anything that was created during the R session</li>
+<li><code>--file</code>: Run this file</li>
+<li><code>--args</code>: Pass these arguments to the file being run</li>
+</ul>
+<p>Thus running a file with Rscript is an easier way to run the following:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">R --slave --no-restore --file=print-args.R --args</code></pre></div>
+<pre class="output"><code>/usr/lib/R/bin/exec/R
+--slave
+--no-restore
+--file=print-args.R
+--args
+</code></pre>
+<p>If we run it with a few arguments, however:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rscript print-args.R first second third</code></pre></div>
+<pre class="output"><code>/usr/lib/R/bin/exec/R
+--slave
+--no-restore
+--file=print-args.R
+--args
+first
+second
+third
+</code></pre>
+<p>then <code>commandArgs</code> adds each of those arguments to the vector it returns. Since the first elements of the vector are always the same, we can tell <code>commandArgs</code> to only return the arguments that come after <code>--args</code>. Let’s update <code>print-args.R</code> and save it as <code>print-args-trailing.R</code>:</p>
+<pre class="output"><code>args &lt;- commandArgs(trailingOnly = TRUE)
+cat(args, sep = &quot;\n&quot;)
+</code></pre>
+<p>And then run <code>print-args-trailing</code> from the Unix Shell:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rscript print-args-trailing.R first second third</code></pre></div>
+<pre class="output"><code>first
+second
+third</code></pre>
+<p>Now <code>commandArgs</code> returns only the arguments that we listed after <code>print-args-trailing.R</code>.</p>
+<p>With this in hand, let’s build a version of <code>analysis.R</code> that makes a plot for publication. The first step is to write functions for plotting.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+plot_gap &lt;-<span class="st"> </span>function(dat) {
+  <span class="kw">ggplot</span>(<span class="dt">data =</span> dat, <span class="kw">aes</span>(<span class="dt">x =</span> lifeExp, <span class="dt">y =</span> gdpPercap)) +<span class="st"> </span><span class="kw">geom_point</span>()
+  <span class="kw">ggplot</span>(<span class="dt">data =</span> dat, <span class="kw">aes</span>(<span class="dt">x =</span> lifeExp, <span class="dt">y =</span> gdpPercap)) +<span class="st"> </span><span class="kw">geom_point</span>() +<span class="st"> </span><span class="kw">scale_y_log10</span>() +<span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span><span class="st">&quot;lm&quot;</span>)
+}</code></pre></div>
+<p>The second step is to add a function that loads the data and calls our plotting function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">main &lt;-<span class="st"> </span>function() {
+  args &lt;-<span class="st"> </span><span class="kw">commandArgs</span>(<span class="dt">trailingOnly =</span> <span class="ot">TRUE</span>)
+  filename &lt;-<span class="st"> </span>args[<span class="dv">1</span>]
+  dat &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file =</span> filename, <span class="dt">header =</span> <span class="ot">TRUE</span>)
+  <span class="kw">plot_gap</span>(dat)
+}</code></pre></div>
+<p>Now we need to add a call to our main function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">main</span>()</code></pre></div>
+<p>Now we can run this script on our gapminder data (or any other similar dataset).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rscript analysis.R gapminder-FiveYearData.csv</code></pre></div>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/lesson-template">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+  </body>
+</html>
