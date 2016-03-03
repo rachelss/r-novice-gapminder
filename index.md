@@ -24,7 +24,7 @@ usability.
 
 > ## Prerequisites {.prereq}
 >
-> Have attended the Shell and Git sessions.
+> Have attended the Shell sessions.
 >
 
 ## Topics
@@ -36,8 +36,7 @@ usability.
 5.  [Plotting](05-plot-ggplot2.html)
 6.  [Vector data](06-vectorisation.html)
 7.  [Loops](07-control-flow.html)
-8.  [Writing data](08-writing-data.html)
-9.  [Split-apply-combine](09-plyr.html)
+8.  [Command line](08-cmdline.html)
 
 
 ## Other Resources
