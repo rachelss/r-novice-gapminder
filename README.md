@@ -66,4 +66,4 @@ mailing list.
 
 ## Rendered version of lessons
 
-You can also view [the rendered version of this material](https://swcarpentry.github.io/r-novice-gapminder).
+You can also view [the rendered version of this material](https://rachelss.github.io/r-novice-gapminder/).
